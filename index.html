@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מנתח שחמט – Chess Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>
+      <span class="logo">♞</span>
+      <span>מנתח שחמט</span>
+    </h1>
+    <div style="font-size: 13px; color: var(--text-muted);">
+      ניתוח אישי עם Stockfish · ללא תשלום
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Settings Bar -->
+    <div class="settings-bar">
+      <div>
+        <label class="input-label" for="username-input">שם משתמש ב-chess.com</label>
+        <div class="input-group">
+          <input id="username-input" type="text" class="input" placeholder="לדוגמה: magnuscarlsen">
+          <button id="save-username-btn" class="btn btn-secondary">שמור</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="input-label" for="depth-select">עומק ניתוח (חוזק המנוע)</label>
+        <select id="depth-select" class="input" style="min-width: 160px;">
+          <option value="12">12 – מהיר</option>
+          <option value="15" selected>15 – מאוזן</option>
+          <option value="18">18 – עמוק</option>
+          <option value="20">20 – עמוק מאוד (איטי)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="input-label" for="max-games-select">כמה משחקים אחרונים לסרוק</label>
+        <select id="max-games-select" class="input" style="min-width: 160px;">
+          <option value="20">20 משחקים</option>
+          <option value="50" selected>50 משחקים</option>
+          <option value="100">100 משחקים</option>
+          <option value="200">200 משחקים</option>
+          <option value="500">500 משחקים</option>
+          <option value="0">ללא הגבלה</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="input-label" for="filter-select">סינון לפי תוצאה</label>
+        <select id="filter-select" class="input" style="min-width: 180px;">
+          <option value="all" selected>כל המשחקים</option>
+          <option value="loss">רק הפסדים</option>
+          <option value="win">רק ניצחונות</option>
+          <option value="loss_draw">הפסדים ותיקו</option>
+        </select>
+      </div>
+
+      <div class="last-scan" id="last-scan">לא בוצעה סריקה עדיין</div>
+
+      <button id="scan-btn" class="btn">
+        <span>🔄</span>
+        <span>סרוק עכשיו</span>
+      </button>
+
+      <button id="clear-btn" class="btn btn-danger" title="מחיקת כל המשחקים והניתוחים מהמחשב המקומי">
+        <span>🗑</span>
+        <span>נקה הכל</span>
+      </button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrapper" id="progress-wrapper">
+      <div class="progress-label">
+        <span id="progress-text">טוען...</span>
+        <span id="progress-percent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">סך משחקים</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-analyzed">0</div>
+        <div class="stat-label">משחקים שנותחו</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-wins" style="color: var(--q-best);">0</div>
+        <div class="stat-label">ניצחונות</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-losses" style="color: var(--q-blunder);">0</div>
+        <div class="stat-label">הפסדים</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-accuracy" style="color: var(--q-inaccuracy);">–</div>
+        <div class="stat-label">דיוק ממוצע</div>
+      </div>
+    </div>
+
+    <!-- Games Table -->
+    <div class="games-table-wrapper" id="games-wrapper">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-state-icon">♟</div>
+        <div class="empty-state-title">אין עדיין משחקים</div>
+        <div class="empty-state-desc">הזן את שם המשתמש שלך מ-chess.com ולחץ "סרוק עכשיו" כדי לטעון את כל המשחקים שלך.</div>
+      </div>
+
+      <table class="games-table" id="games-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>תאריך</th>
+            <th>צבע</th>
+            <th>יריב</th>
+            <th>תוצאה</th>
+            <th>שלב פתיחה</th>
+            <th>סטטוס ניתוח</th>
+            <th>דיוק שלי</th>
+            <th>פעולה</th>
+          </tr>
+        </thead>
+        <tbody id="games-tbody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Libraries: chess.js with multi-CDN fallback (needed for in-table analysis) -->
+  <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.js"></script>
+  <script>
+    if (typeof Chess === 'undefined') {
+      document.write('<scr' + 'ipt src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"><\/scr' + 'ipt>');
+    }
+  </script>
+  <script>
+    if (typeof Chess === 'undefined') {
+      document.write('<scr' + 'ipt src="https://unpkg.com/chess.js@0.13.4/chess.js"><\/scr' + 'ipt>');
+    }
+  </script>
+
+  <!-- App scripts -->
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/analyzer.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

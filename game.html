@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניתוח משחק – Chess Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>
+      <span class="logo">♞</span>
+      <span>ניתוח משחק</span>
+    </h1>
+    <a href="index.html" class="back-link">
+      <span>→</span>
+      <span>חזרה לרשימת המשחקים</span>
+    </a>
+  </header>
+
+  <!-- Top action banner: visible whenever the game hasn't been analyzed yet -->
+  <div class="app-container" style="padding-bottom: 0;">
+    <div id="analyze-banner" class="analyze-banner" style="display: none;">
+      <div>
+        <div style="font-weight: 700; font-size: 16px;">המשחק הזה עוד לא נותח</div>
+        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+          לחץ "נתח משחק זה" כדי ש-Stockfish ינתח את כל המהלכים ויסמן טעויות.
+          חושב שמשהו לא עובד? לחץ "בדוק מנוע" כדי לוודא ש-Stockfish נטען כראוי (~5 שניות).
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" id="test-engine-btn">
+          <span>🔬</span>
+          <span>בדוק מנוע</span>
+        </button>
+        <button class="btn" id="analyze-btn-top" style="font-size: 15px; padding: 12px 24px;">
+          <span>⚙</span>
+          <span>נתח משחק זה</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-wrapper" id="progress-wrapper">
+      <div class="progress-label">
+        <span id="progress-text">מנתח את המשחק...</span>
+        <span id="progress-percent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="analysis-layout">
+    <!-- Evaluation bar -->
+    <div class="eval-bar-wrapper" id="eval-bar">
+      <div class="eval-bar-text top" id="eval-text-top"></div>
+      <div class="eval-bar-white" id="eval-bar-white" style="height: 50%;"></div>
+      <div class="eval-bar-text" id="eval-text-bottom">0.0</div>
+    </div>
+
+    <!-- Board area -->
+    <div class="board-area">
+      <div class="player-info" id="player-top">
+        <div>
+          <span class="player-name">—</span>
+          <span class="player-rating">—</span>
+        </div>
+        <div class="player-clock">–:–</div>
+      </div>
+
+      <div class="chess-board-wrapper">
+        <div class="chess-board" id="chess-board"></div>
+        <svg class="board-arrows" id="board-arrows" viewBox="0 0 800 800" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="player-info" id="player-bottom">
+        <div>
+          <span class="player-name">—</span>
+          <span class="player-rating">—</span>
+        </div>
+        <div class="player-clock">–:–</div>
+      </div>
+
+      <div class="nav-controls">
+        <button class="btn-icon" id="nav-start" title="התחלה (Home)">⏮</button>
+        <button class="btn-icon" id="nav-prev" title="מהלך אחורה (חץ ימינה)">▶</button>
+        <button class="btn-icon" id="nav-next" title="מהלך קדימה (חץ שמאלה)">◀</button>
+        <button class="btn-icon" id="nav-end" title="סוף (End)">⏭</button>
+        <button class="btn-icon" id="nav-flip" title="הפוך לוח">⇅</button>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="game-info-card" id="game-info">
+        <div class="info-row"><span class="info-label">תאריך</span><span id="info-date">–</span></div>
+        <div class="info-row"><span class="info-label">בקרת זמן</span><span id="info-time">–</span></div>
+        <div class="info-row"><span class="info-label">פתיחה</span><span id="info-opening">–</span></div>
+        <div class="info-row"><span class="info-label">תוצאה</span><span id="info-result">–</span></div>
+      </div>
+
+      <div class="current-analysis" id="current-analysis">
+        <div class="analysis-header">
+          <span class="quality-tag" id="quality-tag" style="background: var(--text-muted);">–</span>
+          <span class="eval-display" id="eval-display">+0.00</span>
+        </div>
+        <div id="move-explanation" style="font-size: 13px; color: var(--text-secondary); min-height: 20px;">
+          התחל לנגן את המשחק כדי לראות ניתוח
+        </div>
+        <div class="best-move-row" id="best-move-row" style="display: none;">
+          <div class="best-move-label">המהלך הטוב ביותר היה:</div>
+          <div class="best-move-notation" id="best-move-notation">–</div>
+        </div>
+      </div>
+
+      <!-- Analysis summary (accuracy + mistake counts), shown after analysis -->
+      <div class="card" id="summary-card" style="display: none; padding: 14px 18px;">
+        <div class="card-title" style="margin-bottom: 10px;">סיכום הניתוח</div>
+        <div id="summary-content"></div>
+      </div>
+
+      <!-- Eval graph like chess.com's game review -->
+      <div class="card" id="eval-graph-card" style="display: none; padding: 10px;">
+        <svg id="eval-graph" style="width: 100%; height: 70px; display: block; cursor: pointer; direction: ltr;" preserveAspectRatio="none"></svg>
+      </div>
+
+      <div class="move-list-card">
+        <div class="move-list-header">רשימת מהלכים</div>
+        <div class="move-list" id="move-list"></div>
+      </div>
+
+      <button class="btn" id="analyze-btn" style="display: none;">
+        <span>⚙</span>
+        <span>נתח משחק זה</span>
+      </button>
+
+      <button class="btn btn-secondary" id="reanalyze-btn" style="display: none;" title="מחיקת הניתוח הקיים והרצה מחדש עם ההגדרות הנוכחיות">
+        <span>🔁</span>
+        <span>נתח מחדש</span>
+      </button>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Libraries: chess.js with multi-CDN fallback -->
+  <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.js"></script>
+  <script>
+    /* Fallback: if jsDelivr failed (ad-blocker, network), try other mirrors synchronously. */
+    if (typeof Chess === 'undefined') {
+      document.write('<scr' + 'ipt src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"><\/scr' + 'ipt>');
+    }
+  </script>
+  <script>
+    if (typeof Chess === 'undefined') {
+      document.write('<scr' + 'ipt src="https://unpkg.com/chess.js@0.13.4/chess.js"><\/scr' + 'ipt>');
+    }
+  </script>
+
+  <!-- App scripts -->
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/pieces.js"></script>
+  <script src="assets/js/board.js"></script>
+  <script src="assets/js/analyzer.js"></script>
+  <script src="assets/js/game.js"></script>
+</body>
+</html>
