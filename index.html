@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c1117">
   <title>מנתח שחמט – Chess Analyzer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2381b64c'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -15,7 +17,7 @@
       <span class="logo">♞</span>
       <span>מנתח שחמט</span>
     </h1>
-    <div style="font-size: 13px; color: var(--text-muted);">
+    <div class="header-tagline">
       ניתוח אישי עם Stockfish · ללא תשלום
     </div>
   </header>
@@ -26,7 +28,7 @@
       <div>
         <label class="input-label" for="username-input">שם משתמש ב-chess.com</label>
         <div class="input-group">
-          <input id="username-input" type="text" class="input" placeholder="לדוגמה: magnuscarlsen">
+          <input id="username-input" type="text" class="input" placeholder="לדוגמה: magnuscarlsen" autocomplete="off" spellcheck="false">
           <button id="save-username-btn" class="btn btn-secondary">שמור</button>
         </div>
       </div>
@@ -66,12 +68,12 @@
       <div class="last-scan" id="last-scan">לא בוצעה סריקה עדיין</div>
 
       <button id="scan-btn" class="btn">
-        <span>🔄</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
         <span>סרוק עכשיו</span>
       </button>
 
       <button id="clear-btn" class="btn btn-danger" title="מחיקת כל המשחקים והניתוחים מהמחשב המקומי">
-        <span>🗑</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         <span>נקה הכל</span>
       </button>
     </div>
@@ -119,21 +121,23 @@
         <div class="empty-state-desc">הזן את שם המשתמש שלך מ-chess.com ולחץ "סרוק עכשיו" כדי לטעון את כל המשחקים שלך.</div>
       </div>
 
-      <table class="games-table" id="games-table" style="display: none;">
-        <thead>
-          <tr>
-            <th>תאריך</th>
-            <th>צבע</th>
-            <th>יריב</th>
-            <th>תוצאה</th>
-            <th>שלב פתיחה</th>
-            <th>סטטוס ניתוח</th>
-            <th>דיוק שלי</th>
-            <th>פעולה</th>
-          </tr>
-        </thead>
-        <tbody id="games-tbody"></tbody>
-      </table>
+      <div class="games-table-scroll">
+        <table class="games-table" id="games-table" style="display: none;">
+          <thead>
+            <tr>
+              <th>תאריך</th>
+              <th>צבע</th>
+              <th>יריב</th>
+              <th>תוצאה</th>
+              <th>שלב פתיחה</th>
+              <th>סטטוס ניתוח</th>
+              <th>דיוק שלי</th>
+              <th>פעולה</th>
+            </tr>
+          </thead>
+          <tbody id="games-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </main>
 
