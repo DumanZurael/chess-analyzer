@@ -271,27 +271,30 @@ a:hover { color: var(--accent-secondary-strong); }
 
 .input {
   background: var(--bg-secondary);
-  border: 1px solid var(--border-strong);
+  border: 1.5px solid var(--border-strong);
   color: var(--text-primary);
-  min-height: 44px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 14.5px;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
   font-family: inherit;
   outline: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
   min-width: 220px;
 }
-.input::placeholder { color: var(--text-muted); }
-.input:hover { border-color: var(--text-muted); }
+.input::placeholder { color: var(--text-muted); font-weight: 400; }
+.input:hover { border-color: var(--text-muted); background: var(--bg-tertiary); }
 .input:focus {
   border-color: var(--accent-primary);
-  box-shadow: var(--ring);
+  box-shadow: var(--ring), inset 0 1px 3px rgba(0, 0, 0, 0.2);
   background: var(--bg-tertiary);
 }
 
 select.input {
   cursor: pointer;
+  font-weight: 600;
   appearance: none;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239fb0c0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -467,6 +470,11 @@ select.input {
 }
 
 .games-table tbody tr:last-child td { border-bottom: none; }
+
+.td-opening { font-size: 12px; color: var(--text-secondary); }
+.td-opponent { font-weight: 600; }
+.td-action { white-space: nowrap; }
+.td-action > * + * { margin-inline-start: 8px; }
 
 .result-badge {
   display: inline-block;
@@ -855,16 +863,37 @@ select.input {
 /* Navigation Controls */
 .nav-controls {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   justify-content: center;
-  margin-top: 12px;
+  margin: 12px auto 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 6px;
+  width: fit-content;
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-controls .btn-icon {
-  font-size: 16px;
-  width: 52px;
-  height: 48px;
+  font-size: 17px;
+  width: 56px;
+  height: 44px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
 }
+.nav-controls .btn-icon:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transform: none;
+}
+.nav-controls .btn-icon:active {
+  background: var(--accent-primary);
+  color: #fff;
+}
+.nav-controls .btn-icon svg { width: 20px; height: 20px; }
 
 /* ============================================
    Sidebar (Move list + Analysis)
@@ -1095,7 +1124,7 @@ select.input {
    ============================================ */
 
 @media (max-width: 720px) {
-  .app-header { padding: 12px 16px; }
+  .app-header { padding: 10px 14px; }
   .app-header h1 { font-size: 18px; }
   .app-header .logo { width: 36px; height: 36px; font-size: 18px; }
   .header-tagline { display: none; }
@@ -1117,17 +1146,92 @@ select.input {
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .stat-value { font-size: 26px; }
 
-  .games-table th, .games-table td { padding: 10px 10px; font-size: 13px; }
+  /* --- Games list becomes a card list: no horizontal scrolling --- */
+  .games-table thead { display: none; }
+  .games-table, .games-table tbody, .games-table td { display: block; }
+  .games-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "opponent result"
+      "opening  color"
+      "status   accuracy"
+      "date     date"
+      "action   action";
+    gap: 7px 12px;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .games-table td { padding: 0; border: none; }
+  .td-opponent { grid-area: opponent; font-weight: 700; font-size: 15.5px; }
+  .td-result { grid-area: result; justify-self: end; }
+  .td-opening { grid-area: opening; font-size: 12.5px; }
+  .td-color { grid-area: color; justify-self: end; font-size: 12.5px; color: var(--text-secondary); }
+  .td-status { grid-area: status; }
+  .td-accuracy { grid-area: accuracy; justify-self: end; font-size: 13px; }
+  .td-date { grid-area: date; font-size: 12px; color: var(--text-muted); }
+  .games-table td.td-action {
+    grid-area: action;
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    white-space: normal;
+  }
+  .td-action > * + * { margin-inline-start: 0; }
+  .td-action .btn {
+    flex: 1;
+    min-height: 44px;
+    font-size: 14.5px;
+    border-radius: var(--radius-sm);
+  }
 
   .toast-container { left: 12px; right: 12px; }
   .toast { min-width: 0; max-width: none; }
 
-  .analyze-banner { padding: 16px; }
+  /* --- Game page: everything fits one screen --- */
+  .analyze-banner { padding: 14px 16px; gap: 12px; margin-bottom: 10px; }
+  .analyze-banner-title { font-size: 15px; }
+  .analyze-banner-desc { display: none; }
   .analyze-banner-actions { width: 100%; }
   .analyze-banner-actions .btn { flex: 1; }
 
-  .nav-controls { gap: 8px; }
-  .nav-controls .btn-icon { flex: 1; max-width: 64px; }
+  .analysis-layout {
+    padding: 10px 12px calc(86px + env(safe-area-inset-bottom));
+    gap: 12px;
+  }
+  .player-info { padding: 7px 12px; font-size: 13px; }
+  .player-info .player-clock { padding: 3px 10px; font-size: 12px; }
+  .chess-board-wrapper { max-width: min(100%, calc(100dvh - 345px)); }
+
+  /* Move navigation becomes a fixed app-style bottom bar */
+  .nav-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    margin: 0;
+    gap: 8px;
+    border: none;
+    border-top: 1px solid var(--border-strong);
+    border-radius: 0;
+    background: rgba(12, 17, 23, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    z-index: 90;
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.4);
+  }
+  .nav-controls .btn-icon {
+    flex: 1;
+    max-width: none;
+    height: 48px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+  }
 
   .move-list-card { max-height: 320px; }
 }

@@ -167,14 +167,14 @@
         : `<button class="btn btn-sm analyze-row-btn" data-id="${g.id}">נתח</button>`;
       return `
         <tr data-id="${g.id}">
-          <td>${fmtDate(g.endTime)}</td>
-          <td>${colorIndicator(g.ourColor === 'unknown' ? 'white' : g.ourColor)}</td>
-          <td>${opp}</td>
-          <td>${resultBadge(g.result)}</td>
-          <td style="font-size:12px; color: var(--text-secondary);">${g.opening || g.eco || '–'}<br><span style="color: var(--text-muted);">${fmtTimeControl(g.timeControl, g.timeClass)}</span></td>
-          <td>${statusBadge(g, analysis)} ${analyzeBtn}</td>
-          <td>${accuracyCell(analysis, g.ourColor)}</td>
-          <td><a href="game.html?id=${g.id}" class="btn btn-secondary btn-sm">פתח</a></td>
+          <td class="td-date">${fmtDate(g.endTime)}</td>
+          <td class="td-color">${colorIndicator(g.ourColor === 'unknown' ? 'white' : g.ourColor)}</td>
+          <td class="td-opponent">${opp}</td>
+          <td class="td-result">${resultBadge(g.result)}</td>
+          <td class="td-opening">${g.opening || g.eco || '–'}<br><span style="color: var(--text-muted);">${fmtTimeControl(g.timeControl, g.timeClass)}</span></td>
+          <td class="td-status">${statusBadge(g, analysis)}</td>
+          <td class="td-accuracy">${accuracyCell(analysis, g.ourColor)}</td>
+          <td class="td-action">${analyzeBtn}<a href="game.html?id=${g.id}" class="btn btn-secondary btn-sm">פתח</a></td>
         </tr>
       `;
     }).join('');
