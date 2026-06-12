@@ -164,7 +164,7 @@
       const opp = g.opponent.username + (g.opponent.rating ? ` <span style="color: var(--text-muted); font-size:12px;">(${g.opponent.rating})</span>` : '');
       const analyzeBtn = isAnalyzed
         ? ''
-        : `<button class="btn analyze-row-btn" data-id="${g.id}" style="padding:6px 12px; font-size:12px;">⚙ נתח</button>`;
+        : `<button class="btn btn-sm analyze-row-btn" data-id="${g.id}">נתח</button>`;
       return `
         <tr data-id="${g.id}">
           <td>${fmtDate(g.endTime)}</td>
@@ -174,7 +174,7 @@
           <td style="font-size:12px; color: var(--text-secondary);">${g.opening || g.eco || '–'}<br><span style="color: var(--text-muted);">${fmtTimeControl(g.timeControl, g.timeClass)}</span></td>
           <td>${statusBadge(g, analysis)} ${analyzeBtn}</td>
           <td>${accuracyCell(analysis, g.ourColor)}</td>
-          <td><a href="game.html?id=${g.id}" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">פתח</a></td>
+          <td><a href="game.html?id=${g.id}" class="btn btn-secondary btn-sm">פתח</a></td>
         </tr>
       `;
     }).join('');
